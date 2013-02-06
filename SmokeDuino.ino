@@ -11,12 +11,15 @@
 #include <DallasTemperature.h>
 
 /* Pin connected to PowerSwitch Tail */
+/* I have an LED connected in parallel */
+/* so both will turn on at the same time */
 int powerpin = 4;
 
 /* Analog pin for potentiometer */
 int potPin = 1;
 
 /* Low and high points for temperature settings */
+/* see getdesire() below */
 int templow = 100;
 int temphigh = 200;
 
@@ -24,11 +27,12 @@ int counter = 0;
 int temperature = 0;
 int desiredtemp = 0;
 
-/*-----( Declare Constants )-----*/
-#define ONE_WIRE_BUS 3 /*-(Connect to Pin 2 )-*/
+/* Variable for One Wire Bus */
+#define ONE_WIRE_BUS 3 /*-(Connect to Pin 3 )-*/
 
-/*-----( Declare objects )-----*/
-/* Set up a oneWire instance to communicate with any OneWire device*/
+/* Set up a oneWire instance to communicate with any OneWire device */
+/* By using this, we don't need to know what the address for the */
+/* device */
 OneWire ourWire(ONE_WIRE_BUS);
 
 /* Tell Dallas Temperature Library to use oneWire Library */
@@ -50,9 +54,8 @@ void setup()
   lcd.print("Set:");
   /*-( Start up the DallasTemperature library )-*/
   sensors.begin();
-  /* Set up powerpin and ledpin to be output */
+  /* Set up powerpin to be output */
   pinMode(powerpin,OUTPUT);
-  pinMode(ledpin,OUTPUT);
   /* Make sure PowerSwitch Tail is off */
   digitalWrite(powerpin,LOW);
 }
@@ -60,6 +63,8 @@ void setup()
 void loop()                     // run over and over again
 {
  sensors.requestTemperatures(); // Send the command to get temperatures
+
+ /* Grab the temperature in F */
  temperature=sensors.getTempFByIndex(0);
  
  /* What temperature are we looking for? */
@@ -82,6 +87,8 @@ void loop()                     // run over and over again
    }
  }
  /* Print out the temperature we want to be set to */
+ /* We update this continually so there's a smooth change */
+ /* when turning the knob */
  lcd.setCursor(5,1);
  lcd.print(desiredtemp);
  lcd.print("  ");
@@ -90,6 +97,9 @@ void loop()                     // run over and over again
  counter = counter + 1;
 }
 
+/* Not sure why I made this a function, but whatever */
+/* Translate the value from the pot to a value between */
+/* templow and temphigh */
 float getdesire(int pin){
   return (map(analogRead(pin), 0, 1023, temphigh, templow)) ;
 }
