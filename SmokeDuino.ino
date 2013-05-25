@@ -59,42 +59,43 @@ void setup()
   /* Make sure PowerSwitch Tail is off */
   digitalWrite(powerpin,LOW);
 }
- 
+
 void loop()                     // run over and over again
 {
- sensors.requestTemperatures(); // Send the command to get temperatures
+  sensors.requestTemperatures(); // Send the command to get temperatures
 
- /* Grab the temperature in F */
- temperature=sensors.getTempFByIndex(0);
- 
- /* What temperature are we looking for? */
- desiredtemp=int(getdesire(potPin));
- 
- /* Don't delay too often when turning on */
- /* and off the temperature */
- delay(100);
- if ((counter == 10)) {
-   lcd.setCursor(5,0);
-   lcd.print(temperature);
-   lcd.print("  ");
-   lcd.setCursor(9,0);
-   lcd.print("F");
-   counter = 0;
-   if ((temperature < desiredtemp) && ( temperature > 0 )) {
-     digitalWrite(powerpin, HIGH);
-   } else {
-     digitalWrite(powerpin, LOW);
-   }
- }
- /* Print out the temperature we want to be set to */
- /* We update this continually so there's a smooth change */
- /* when turning the knob */
- lcd.setCursor(5,1);
- lcd.print(desiredtemp);
- lcd.print("  ");
- lcd.setCursor(9,1);
- lcd.print("F");
- counter = counter + 1;
+  /* Grab the temperature in F */
+  temperature=sensors.getTempFByIndex(0);
+
+  /* What temperature are we looking for? */
+  desiredtemp=int(getdesire(potPin));
+
+  /* Don't delay too often when turning on */
+  /* and off the temperature */
+  delay(100);
+  if ((counter == 10)) {
+    lcd.setCursor(5,0);
+    lcd.print(temperature);
+    lcd.print("  ");
+    lcd.setCursor(9,0);
+    lcd.print("F");
+    counter = 0;
+    if ((temperature < desiredtemp) && ( temperature > 0 )) {
+      digitalWrite(powerpin, HIGH);
+    } 
+    else {
+      digitalWrite(powerpin, LOW);
+    }
+  }
+  /* Print out the temperature we want to be set to */
+  /* We update this continually so there's a smooth change */
+  /* when turning the knob */
+  lcd.setCursor(5,1);
+  lcd.print(desiredtemp);
+  lcd.print("  ");
+  lcd.setCursor(9,1);
+  lcd.print("F");
+  counter = counter + 1;
 }
 
 /* Not sure why I made this a function, but whatever */
@@ -103,3 +104,4 @@ void loop()                     // run over and over again
 float getdesire(int pin){
   return (map(analogRead(pin), 0, 1023, temphigh, templow)) ;
 }
+
